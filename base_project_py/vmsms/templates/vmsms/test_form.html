@@ -1,0 +1,44 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Add New Test | VMSMS{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Test</h4>
+        </div>
+        <div class="card-body">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              {{ form.test_name.label_tag }}
+              {{ form.test_name }}
+              {% if form.test_name.errors %}
+                <div class="text-danger small">{{ form.test_name.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              {{ form.test_unit_price.label_tag }}
+              {{ form.test_unit_price }}
+              {% if form.test_unit_price.errors %}
+                <div class="text-danger small">{{ form.test_unit_price.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              {{ form.component_name.label_tag }}
+              {{ form.component_name }}
+              {% if form.component_name.errors %}
+                <div class="text-danger small">{{ form.component_name.errors }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-success w-100">
+              <i class="fas fa-plus me-2"></i>Add Test
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

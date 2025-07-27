@@ -1,0 +1,183 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Invoice Details | VMSMS{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">
+            <i class="fas fa-file-invoice me-2"></i>Invoice Details
+          </h3>
+          <div>
+            <a href="{% url 'vmsms:invoice_update' invoice.invoice_id %}" class="btn btn-light me-2">
+              <i class="fas fa-edit me-2"></i>Edit
+            </a>
+            <a href="{% url 'vmsms:invoice_list' %}" class="btn btn-outline-light">
+              <i class="fas fa-arrow-left me-2"></i>Back
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-info-circle me-2"></i>Invoice Information
+              </h5>
+              <table class="table table-borderless">
+                <tr>
+                  <td><strong>Invoice ID:</strong></td>
+                  <td><span class="badge bg-secondary">{{ invoice.invoice_id }}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Invoice Date:</strong></td>
+                  <td>{{ invoice.invoice_date|date:"F d, Y" }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Amount Due:</strong></td>
+                  <td><span class="h5 text-success">${{ invoice.amount_due|floatformat:2 }}</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Payment Status:</strong></td>
+                  <td>
+                    {% if invoice.payment_status == 'Paid' %}
+                      <span class="badge bg-success">
+                        <i class="fas fa-check me-1"></i>Paid
+                      </span>
+                    {% elif invoice.payment_status == 'Pending' %}
+                      <span class="badge bg-warning text-dark">
+                        <i class="fas fa-clock me-1"></i>Pending
+                      </span>
+                    {% else %}
+                      <span class="badge bg-danger">
+                        <i class="fas fa-times me-1"></i>{{ invoice.payment_status }}
+                      </span>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Payment Date:</strong></td>
+                  <td>
+                    {% if invoice.payment_date %}
+                      {{ invoice.payment_date|date:"F d, Y H:i" }}
+                    {% else %}
+                      <span class="text-muted">Not paid yet</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              </table>
+            </div>
+            
+            <div class="col-md-6">
+              <h5 class="text-primary mb-3">
+                <i class="fas fa-calendar-check me-2"></i>Appointment Details
+              </h5>
+              {% if invoice.appointment %}
+                <table class="table table-borderless">
+                  <tr>
+                    <td><strong>Appointment ID:</strong></td>
+                    <td><span class="badge bg-info">{{ invoice.appointment.appointment_id }}</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Service Type:</strong></td>
+                    <td>
+                      <span class="badge bg-primary">{{ invoice.appointment.service_type|title }}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Appointment Date:</strong></td>
+                    <td>{{ invoice.appointment.appointment_time|date:"F d, Y" }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Appointment Time:</strong></td>
+                    <td>{{ invoice.appointment.appointment_time|time:"H:i" }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Test Completed:</strong></td>
+                    <td>
+                      {% if invoice.appointment.test_completed %}
+                        <span class="badge bg-success">Yes</span>
+                      {% else %}
+                        <span class="badge bg-warning text-dark">No</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Repair Approved:</strong></td>
+                    <td>
+                      {% if invoice.appointment.repair_approved %}
+                        <span class="badge bg-success">Yes</span>
+                      {% else %}
+                        <span class="badge bg-warning text-dark">No</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                </table>
+              {% else %}
+                <p class="text-muted">No appointment linked to this invoice.</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          {% if invoice.appointment %}
+            <hr>
+            <div class="row">
+              <div class="col-md-6">
+                <h5 class="text-primary mb-3">
+                  <i class="fas fa-user me-2"></i>Customer Information
+                </h5>
+                {% if invoice.appointment.customer %}
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><strong>Name:</strong></td>
+                      <td>{{ invoice.appointment.customer.name }} {{ invoice.appointment.customer.surname }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Email:</strong></td>
+                      <td>{{ invoice.appointment.customer.email }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Phone:</strong></td>
+                      <td>{{ invoice.appointment.customer.phone_number|default:"N/A" }}</td>
+                    </tr>
+                  </table>
+                {% else %}
+                  <p class="text-muted">No customer information available.</p>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-6">
+                <h5 class="text-primary mb-3">
+                  <i class="fas fa-car me-2"></i>Vehicle Information
+                </h5>
+                {% if invoice.appointment.vehicle %}
+                  <table class="table table-borderless">
+                    <tr>
+                      <td><strong>License Plate:</strong></td>
+                      <td><span class="badge bg-info">{{ invoice.appointment.vehicle.license_plate }}</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Model:</strong></td>
+                      <td>{{ invoice.appointment.vehicle.model }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Year:</strong></td>
+                      <td>{{ invoice.appointment.vehicle.year }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>VIN:</strong></td>
+                      <td><code>{{ invoice.appointment.vehicle.vin_number|default:"N/A" }}</code></td>
+                    </tr>
+                  </table>
+                {% else %}
+                  <p class="text-muted">No vehicle information available.</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

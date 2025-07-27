@@ -1,0 +1,128 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Test List | VMSMS{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="mb-3">
+        <i class="fas fa-clipboard-list me-2 text-primary"></i>Test Management
+      </h2>
+      <p class="text-muted">Manage all tests and their results.</p>
+    </div>
+    {% if user_type == 'mechanic' %}
+    <div class="col-auto">
+      <a href="{% url 'vmsms:test_create' %}" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>Add New Test
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="fas fa-clipboard-list me-2"></i>Tests
+      </h5>
+    </div>
+    <div class="card-body">
+      {% if tests %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Component</th>
+                <th>Unit Price</th>
+                <th>Result</th>
+                <th>Diagnosis</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for test in tests %}
+              <tr>
+                <td>{{ test.test_name }}</td>
+                <td>{{ test.component_name }}</td>
+                <td>${{ test.test_unit_price|default:"N/A" }}</td>
+                <td>{{ test.test_result.value|default:"Not set" }}</td>
+                <td>
+                  {% if test.diagnosis %}
+                    <span class="text-info">{{ test.diagnosis }}</span>
+                  {% else %}
+                    <span class="text-muted">No diagnosis</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if test.diagnosis %}
+                    <span class="badge bg-success">Diagnosed</span>
+                  {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    {% if user_type == 'mechanic' %}
+                      {% if not test.diagnosis %}
+                        <a href="{% url 'vmsms:diagnose_test' test.test_id %}" class="btn btn-sm btn-info">
+                          <i class="fas fa-stethoscope"></i> Diagnose
+                        </a>
+                      {% else %}
+                        <a href="{% url 'vmsms:diagnose_test' test.test_id %}" class="btn btn-sm btn-outline-info">
+                          <i class="fas fa-edit"></i> Edit Diagnosis
+                        </a>
+                        <a href="{% url 'vmsms:suggest_repair' test.test_id %}" class="btn btn-sm btn-warning">
+                          <i class="fas fa-wrench"></i> Suggest Repair
+                        </a>
+                      {% endif %}
+                    {% endif %}
+                    <a href="{% url 'vmsms:test_update' test.test_id %}" class="btn btn-sm btn-outline-warning">
+                      <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {% if user_type in 'mechanic,receptionist' %}
+                      <a href="{% url 'vmsms:test_delete' test.test_id %}" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-4">
+          <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+          <h5>No Tests Found</h5>
+          <p class="text-muted">No tests have been created yet.</p>
+          {% if user_type == 'mechanic' %}
+            <a href="{% url 'vmsms:test_create' %}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add First Test
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Back to Dashboard -->
+  <div class="row mt-4">
+    <div class="col">
+      {% if user_type == 'mechanic' %}
+        <a href="{% url 'vmsms:mechanic_dashboard' %}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+        </a>
+      {% elif user_type == 'customer' %}
+        <a href="{% url 'vmsms:customer_dashboard' %}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+        </a>
+      {% else %}
+        <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back to Appointments
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %} 

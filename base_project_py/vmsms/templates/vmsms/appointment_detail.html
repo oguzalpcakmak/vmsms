@@ -1,0 +1,66 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+{% block title %}Appointment Details | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card p-4">
+      <h2 class="mb-3 text-center">Appointment Details</h2>
+      <div class="mb-3">
+        <strong>ID:</strong> {{ appointment.appointment_id }}<br>
+        <strong>Time:</strong> {{ appointment.appointment_time }}<br>
+        <strong>Vehicle:</strong> {{ vehicle }}<br>
+        <strong>Mechanic:</strong> {{ appointment.mechanic }}<br>
+        <strong>Customer:</strong> {{ appointment.customer }}
+      </div>
+      <h4 class="mt-4">Tests for this Vehicle</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Diagnosis</th>
+              <th>Normal Value</th>
+              <th>Test Result</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for test in tests %}
+            <tr>
+              <td>{{ test.test_name }}</td>
+              <td>{{ test.diagnosis }}</td>
+              <td>{{ test.normal_value }}</td>
+              <td>{{ test.test_result.value }}</td>
+              <td>
+                <a href="{% url 'vmsms:test_update' test.pk %}" class="btn btn-sm btn-warning">Update Test</a>
+                <a href="{% url 'vmsms:testresult_update' test.test_result.pk %}" class="btn btn-sm btn-info">Update Result</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center">No tests found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if can_assign_test %}
+      <h4 class="mt-4">Assign New Test to Vehicle</h4>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in test_form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field|add_class:'form-control' }}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Assign Test</button>
+      </form>
+      {% endif %}
+      <div class="text-center mt-3">
+        <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-secondary">Back to Appointments</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

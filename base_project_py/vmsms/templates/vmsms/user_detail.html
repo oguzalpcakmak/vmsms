@@ -1,0 +1,244 @@
+{% extends 'vmsms/base.html' %}
+{% load static %}
+
+{% block title %}{{ user_type.title }} Details | VMSMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'vmsms:admin_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'vmsms:user_list' %}">User Management</a></li>
+                    <li class="breadcrumb-item active">{{ user.name }} {{ user.surname }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- User Information -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user me-2"></i>{{ user_type.title }} Information
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Basic Details</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Name:</strong></td>
+                                    <td>{{ user.name }} {{ user.surname }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Username:</strong></td>
+                                    <td>{{ user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone:</strong></td>
+                                    <td>{{ user.phone_number|default:"N/A" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Additional Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Address:</strong></td>
+                                    <td>{{ user.address|default:"N/A" }}</td>
+                                </tr>
+                                {% if user_type == 'mechanic' %}
+                                <tr>
+                                    <td><strong>Service Fee:</strong></td>
+                                    <td>${{ user.service_fee|default:"N/A" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Specialization:</strong></td>
+                                    <td>{{ user.specialization_code|default:"N/A" }}</td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'vmsms:user_edit' user_type user_id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit {{ user_type.title }}
+                        </a>
+                        <a href="{% url 'vmsms:user_delete' user_type user_id %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Delete {{ user_type.title }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'vmsms:user_edit' user_type user_id %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <a href="{% url 'vmsms:user_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> All Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Data Sections -->
+    {% if user_type == 'customer' and vehicles %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-car"></i> Vehicles ({{ vehicles.count }})
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>License Plate</th>
+                                    <th>Model</th>
+                                    <th>Year</th>
+                                    <th>VIN</th>
+                                    <th>Insurance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vehicle in vehicles %}
+                                <tr>
+                                    <td>{{ vehicle.license_plate }}</td>
+                                    <td>{{ vehicle.model|default:"N/A" }}</td>
+                                    <td>{{ vehicle.year|default:"N/A" }}</td>
+                                    <td>{{ vehicle.vin_number|default:"N/A" }}</td>
+                                    <td>{{ vehicle.insurance.company|default:"N/A" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if appointments %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calendar-check"></i> Appointments ({{ appointments.count }})
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    {% if user_type == 'customer' %}
+                                    <th>Mechanic</th>
+                                    {% elif user_type == 'mechanic' %}
+                                    <th>Customer</th>
+                                    {% endif %}
+                                    <th>Vehicle</th>
+                                    <th>Repair</th>
+                                    <th>Test</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>{{ appointment.appointment_time|date:"M d, Y H:i" }}</td>
+                                    {% if user_type == 'customer' %}
+                                    <td>{{ appointment.mechanic.name }} {{ appointment.mechanic.surname }}</td>
+                                    {% elif user_type == 'mechanic' %}
+                                    <td>{{ appointment.customer.name }} {{ appointment.customer.surname }}</td>
+                                    {% endif %}
+                                    <td>{{ appointment.vehicle.license_plate }}</td>
+                                    <td>{{ appointment.repair.repair_name|default:"N/A" }}</td>
+                                    <td>{{ appointment.test.test_name|default:"N/A" }}</td>
+                                    <td>
+                                        {% if appointment.appointment_time > now %}
+                                            <span class="badge bg-warning">Upcoming</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user_type == 'mechanic' and repairs %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-wrench"></i> Repairs ({{ repairs.count }})
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Repair Code</th>
+                                    <th>Repair Name</th>
+                                    <th>Vehicle</th>
+                                    <th>Date</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for repair in repairs %}
+                                <tr>
+                                    <td>{{ repair.repair_code }}</td>
+                                    <td>{{ repair.repair_name|default:"N/A" }}</td>
+                                    <td>{{ repair.vehicle.license_plate }}</td>
+                                    <td>{{ repair.repair_date|date:"M d, Y"|default:"N/A" }}</td>
+                                    <td>${{ repair.repair_cost|default:"N/A" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

@@ -1,0 +1,154 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Invoices | VMSMS{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">
+            <i class="fas fa-file-invoice me-2"></i>Invoices
+          </h3>
+          <a href="{% url 'vmsms:invoice_create' %}" class="btn btn-light">
+            <i class="fas fa-plus me-2"></i>Create Invoice
+          </a>
+        </div>
+        <div class="card-body">
+          {% if invoices %}
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th><i class="fas fa-hashtag me-2"></i>Invoice ID</th>
+                    <th><i class="fas fa-calendar me-2"></i>Date</th>
+                    <th><i class="fas fa-user me-2"></i>Customer</th>
+                    <th><i class="fas fa-car me-2"></i>Vehicle</th>
+                    <th><i class="fas fa-dollar-sign me-2"></i>Amount</th>
+                    <th><i class="fas fa-credit-card me-2"></i>Status</th>
+                    <th><i class="fas fa-clock me-2"></i>Payment Date</th>
+                    <th><i class="fas fa-cogs me-2"></i>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for invoice in invoices %}
+                    <tr>
+                      <td>
+                        <span class="badge bg-secondary">{{ invoice.invoice_id }}</span>
+                      </td>
+                      <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                      <td>
+                        {% if invoice.appointment.customer %}
+                          {{ invoice.appointment.customer.name }} {{ invoice.appointment.customer.surname }}
+                        {% else %}
+                          <span class="text-muted">N/A</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if invoice.appointment.vehicle %}
+                          <span class="badge bg-info">{{ invoice.appointment.vehicle.license_plate }}</span>
+                        {% else %}
+                          <span class="text-muted">N/A</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <strong>${{ invoice.amount_due|floatformat:2 }}</strong>
+                      </td>
+                      <td>
+                        {% if invoice.payment_status == 'Paid' %}
+                          <span class="badge bg-success">
+                            <i class="fas fa-check me-1"></i>Paid
+                          </span>
+                        {% elif invoice.payment_status == 'Pending' %}
+                          <span class="badge bg-warning text-dark">
+                            <i class="fas fa-clock me-1"></i>Pending
+                          </span>
+                        {% else %}
+                          <span class="badge bg-danger">
+                            <i class="fas fa-times me-1"></i>{{ invoice.payment_status }}
+                          </span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {% if invoice.payment_date %}
+                          {{ invoice.payment_date|date:"M d, Y H:i" }}
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <a href="{% url 'vmsms:invoice_detail' invoice.invoice_id %}" 
+                             class="btn btn-sm btn-outline-primary" 
+                             title="View Details">
+                            <i class="fas fa-eye"></i>
+                          </a>
+                          <a href="{% url 'vmsms:invoice_update' invoice.invoice_id %}" 
+                             class="btn btn-sm btn-outline-warning" 
+                             title="Edit">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <a href="{% url 'vmsms:invoice_delete' invoice.invoice_id %}" 
+                             class="btn btn-sm btn-outline-danger" 
+                             title="Delete"
+                             onclick="return confirm('Are you sure you want to delete this invoice?')">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="row mt-4">
+              <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Total Invoices</h5>
+                    <h3 class="mb-0">{{ invoices.count }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-success text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Paid</h5>
+                    <h3 class="mb-0">{{ invoices|dictsort:"payment_status"|length }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                  <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h3 class="mb-0">{{ invoices|dictsort:"payment_status"|length }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card bg-info text-white">
+                  <div class="card-body">
+                    <h5 class="card-title">Total Amount</h5>
+                    <h3 class="mb-0">${{ total_amount|floatformat:2 }}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="text-center py-5">
+              <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
+              <h4 class="text-muted">No Invoices Found</h4>
+              <p class="text-muted">Create your first invoice to get started.</p>
+              <a href="{% url 'vmsms:invoice_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Invoice
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,125 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Receptionist Dashboard | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card p-4 shadow">
+      <div class="text-center mb-4">
+        <h2 class="mb-0">
+          <i class="fas fa-user-tie me-2 text-primary"></i>
+          Receptionist Dashboard
+        </h2>
+        <p class="text-muted mt-2">Manage appointments and assist customers</p>
+      </div>
+      
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card border-primary h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-calendar-check me-2"></i>Appointment Management
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-outline-primary w-100 mb-2">
+                <i class="fas fa-list me-2"></i>Manage Appointments
+              </a>
+              <a href="{% url 'vmsms:appointment_create' %}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-plus me-2"></i>Create Appointment
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card border-success h-100">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-users me-2"></i>Customer Management
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:register_customer' %}" class="btn btn-outline-success w-100 mb-2">
+                <i class="fas fa-user-plus me-2"></i>Register Customer
+              </a>
+              <a href="{% url 'vmsms:user_list' %}" class="btn btn-outline-success w-100 mb-2">
+                <i class="fas fa-users-cog me-2"></i>Customer List
+              </a>
+              <a href="{% url 'vmsms:vehicle_list' %}" class="btn btn-outline-success w-100">
+                <i class="fas fa-car me-2"></i>Manage Vehicles
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card border-info h-100">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-file-invoice me-2"></i>Billing & Invoices
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:invoice_list' %}" class="btn btn-outline-info w-100 mb-2">
+                <i class="fas fa-list me-2"></i>Manage Invoices
+              </a>
+              <a href="{% url 'vmsms:invoice_create' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-plus me-2"></i>Create Invoice
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card border-warning h-100">
+            <div class="card-header bg-warning text-dark">
+              <h5 class="mb-0">
+                <i class="fas fa-clipboard-list me-2"></i>Testing & Diagnostics
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:test_list' %}" class="btn btn-outline-warning w-100">
+                <i class="fas fa-list me-2"></i>Manage Tests
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card border-secondary h-100">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-user-edit me-2"></i>Profile Management
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:edit_profile' %}" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-user-cog me-2"></i>Edit Profile
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card border-dark h-100">
+            <div class="card-header bg-dark text-white">
+              <h5 class="mb-0">
+                <i class="fas fa-sign-out-alt me-2"></i>Account Actions
+              </h5>
+            </div>
+            <div class="card-body">
+              <a href="{% url 'vmsms:logout' %}" class="btn btn-outline-dark w-100">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

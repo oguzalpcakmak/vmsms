@@ -1,0 +1,93 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Cost Analytics | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-9">
+    <div class="card p-4">
+      <h2 class="mb-4 text-center">Cost Analytics</h2>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Overall System Costs</h5>
+            <p>Total Spare Parts Cost: <strong>${{ total_spare_parts|floatformat:2 }}</strong></p>
+            <p>Total Examination Cost: <strong>${{ total_exams|floatformat:2 }}</strong></p>
+            <p>Total Cost: <strong>${{ total_cost|floatformat:2 }}</strong></p>
+            <p>Spare Parts Percentage: <strong>{{ spare_parts_pct|floatformat:2 }}%</strong></p>
+            <p>Examination Percentage: <strong>{{ exams_pct|floatformat:2 }}%</strong></p>
+          </div>
+        </div>
+        <div class="col-md-6 text-center">
+          <div class="card card-body bg-light">
+            <h5>Cost Breakdown Pie Chart</h5>
+            <img src="data:image/png;base64,{{ cost_pie_chart }}" alt="Cost Breakdown Pie Chart" class="img-fluid"/>
+          </div>
+        </div>
+      </div>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Insurance Coverage by Company</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Insurance Company</th>
+                    <th>Cost Covered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ins in insurance_costs %}
+                  <tr>
+                    <td>{{ ins.company }}</td>
+                    <td>${{ ins.covered|floatformat:2 }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Spare Part Expenses per Customer</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Customer</th>
+                    <th>Spare Part Expenses</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cust in customer_spare_costs %}
+                  <tr>
+                    <td>{{ cust.name }}</td>
+                    <td>${{ cust.spare_cost|floatformat:2 }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center">
+        <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f8f9fa;
+}
+</style>
+{% endblock %} 

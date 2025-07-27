@@ -1,0 +1,3 @@
+include:
+  - project: odtu/common
+    file: pipeline.yml

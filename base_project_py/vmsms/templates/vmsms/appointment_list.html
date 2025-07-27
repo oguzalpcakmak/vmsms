@@ -1,0 +1,169 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Appointments | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-11 col-lg-10">
+    <div class="card p-4 shadow">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+          <i class="fas fa-calendar-check me-2 text-primary"></i>
+          Appointments
+        </h2>
+        <a href="{% url 'vmsms:appointment_create' %}" class="btn btn-success">
+          <i class="fas fa-plus me-2"></i>Create Appointment
+        </a>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>ID</th>
+              <th>Time</th>
+              <th>Service Type</th>
+              <th>Vehicle</th>
+              <th>Mechanic</th>
+              <th>Customer</th>
+              <th>Test Status</th>
+              <th>Repair Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appt in appointments %}
+            <tr>
+              <td>
+                <strong>{{ appt.appointment_id|default:"N/A" }}</strong>
+              </td>
+              <td>{{ appt.appointment_time|date:"M d, Y H:i"|default:"Not set" }}</td>
+              <td>
+                {% if appt.service_type == 'repair' %}
+                <span class="badge bg-warning">
+                  <i class="fas fa-tools me-1"></i>Repair
+                </span>
+                {% elif appt.service_type == 'test' %}
+                <span class="badge bg-info">
+                  <i class="fas fa-clipboard-check me-1"></i>Test
+                </span>
+                {% else %}
+                <span class="badge bg-secondary">
+                  <i class="fas fa-question me-1"></i>Unknown
+                </span>
+                {% endif %}
+              </td>
+              <td>
+                {% if appt.vehicle %}
+                  <strong>{{ appt.vehicle.license_plate|default:"N/A" }}</strong><br>
+                  <small class="text-muted">{{ appt.vehicle.model|default:"N/A" }}</small>
+                {% else %}
+                  <span class="text-muted">No vehicle assigned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if appt.mechanic %}
+                  {{ appt.mechanic.name|default:"" }} {{ appt.mechanic.surname|default:"" }}
+                {% else %}
+                  <span class="text-muted">No mechanic assigned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if appt.customer %}
+                  {{ appt.customer.name|default:"N/A" }}
+                {% else %}
+                  <span class="text-muted">No customer assigned</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if appt.test_completed %}
+                <span class="badge bg-success">
+                  <i class="fas fa-check me-1"></i>Completed
+                </span>
+                {% else %}
+                <span class="badge bg-secondary">
+                  <i class="fas fa-clock me-1"></i>Pending
+                </span>
+                {% endif %}
+              </td>
+              <td>
+                {% if appt.service_type == 'repair' %}
+                  {% if appt.repair_approved %}
+                  <span class="badge bg-success">
+                    <i class="fas fa-check me-1"></i>Approved
+                  </span>
+                  {% else %}
+                  <span class="badge bg-warning">
+                    <i class="fas fa-clock me-1"></i>Pending
+                  </span>
+                  {% endif %}
+                {% else %}
+                <span class="badge bg-light text-dark">N/A</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <a href="{% url 'vmsms:appointment_detail' appt.pk %}" class="btn btn-sm btn-info" title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="{% url 'vmsms:appointment_update' appt.pk %}" class="btn btn-sm btn-warning" title="Update Appointment">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  {% if appt.service_type == 'repair' and user_type in 'mechanic,admin' %}
+                  <a href="{% url 'vmsms:approve_repair' appt.pk %}" class="btn btn-sm btn-success" title="Approve Repair">
+                    <i class="fas fa-check-double"></i>
+                  </a>
+                  {% endif %}
+                  {% if appt.test and user_type in 'mechanic,admin' %}
+                  <a href="{% url 'vmsms:update_test_result' appt.test.test_id %}" class="btn btn-sm btn-primary" title="Update Test Result">
+                    <i class="fas fa-clipboard-check"></i>
+                  </a>
+                  {% endif %}
+                  <a href="{% url 'vmsms:appointment_delete' appt.pk %}" class="btn btn-sm btn-danger" title="Delete Appointment">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="9" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                  <p>No appointments found.</p>
+                  {% if user_type == 'admin' or user_type == 'receptionist' %}
+                    <p class="small">Create a new appointment to get started.</p>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="text-center mt-4">
+        {% if user_type == 'admin' %}
+          <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+        {% elif user_type == 'receptionist' %}
+          <a href="{% url 'vmsms:receptionist_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+        {% elif user_type == 'mechanic' %}
+          <a href="{% url 'vmsms:mechanic_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+        {% elif user_type == 'customer' %}
+          <a href="{% url 'vmsms:customer_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+        {% else %}
+          <a href="{% url 'vmsms:login' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Login
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

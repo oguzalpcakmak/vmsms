@@ -1,0 +1,217 @@
+{% extends 'vmsms/base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Profile Information Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Edit Profile Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="profile">
+                        
+                        <div class="row">
+                            <!-- Name Field -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-1"></i>First Name <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.name.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Surname Field -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.surname.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Surname <span class="text-danger">*</span>
+                                </label>
+                                {{ form.surname }}
+                                {% if form.surname.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.surname.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Email Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Email Address <span class="text-danger">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.email.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Phone Number Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                                <i class="fas fa-phone me-1"></i>Phone Number
+                            </label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.phone_number.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Address Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">
+                                <i class="fas fa-map-marker-alt me-1"></i>Address
+                            </label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.address.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Mechanic-specific fields -->
+                        {% if form.service_fee %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.service_fee.id_for_label }}" class="form-label">
+                                    <i class="fas fa-dollar-sign me-1"></i>Service Fee
+                                </label>
+                                {{ form.service_fee }}
+                                {% if form.service_fee.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.service_fee.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.specialization_code.id_for_label }}" class="form-label">
+                                    <i class="fas fa-tools me-1"></i>Specialization Code
+                                </label>
+                                {{ form.specialization_code }}
+                                {% if form.specialization_code.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.specialization_code.errors %}
+                                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'vmsms:'|add:user_type|add:'_dashboard' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Save Profile Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="password">
+                        
+                        <!-- Current Password Field -->
+                        <div class="mb-3">
+                            <label for="{{ password_form.current_password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>{{ password_form.current_password.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ password_form.current_password }}
+                            {% if password_form.current_password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in password_form.current_password.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- New Password Field -->
+                        <div class="mb-3">
+                            <label for="{{ password_form.new_password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>{{ password_form.new_password.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ password_form.new_password }}
+                            {% if password_form.new_password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in password_form.new_password.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Password must be at least 8 characters long.
+                            </div>
+                        </div>
+                        
+                        <!-- Confirm Password Field -->
+                        <div class="mb-3">
+                            <label for="{{ password_form.confirm_password.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-1"></i>{{ password_form.confirm_password.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ password_form.confirm_password }}
+                            {% if password_form.confirm_password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in password_form.confirm_password.errors %}
+                                        <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password Form Actions -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key me-1"></i>Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

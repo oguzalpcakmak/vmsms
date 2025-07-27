@@ -1,0 +1,254 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+
+{% block title %}{% if update %}Update Appointment{% else %}Create Appointment{% endif %} | VMSMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        {% if update %}
+                            <i class="fas fa-edit"></i> Update Appointment
+                        {% else %}
+                            <i class="fas fa-calendar-plus"></i> Create New Appointment
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="appointment-form">
+                        {% csrf_token %}
+                        
+                        <!-- Service Type Selection -->
+                        <div class="mb-4">
+                            <label for="{{ form.service_type.id_for_label }}" class="form-label">
+                                <i class="fas fa-tools"></i> Service Type *
+                            </label>
+                            {{ form.service_type|add_class:"form-select" }}
+                            {% if form.service_type.help_text %}
+                                <div class="form-text">{{ form.service_type.help_text }}</div>
+                            {% endif %}
+                            {% if form.service_type.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.service_type.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Customer Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.customer.id_for_label }}" class="form-label">
+                                <i class="fas fa-user"></i> Customer *
+                            </label>
+                            {{ form.customer|add_class:"form-select" }}
+                            {% if form.customer.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.customer.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Vehicle Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.vehicle.id_for_label }}" class="form-label">
+                                <i class="fas fa-car"></i> Vehicle *
+                            </label>
+                            {{ form.vehicle|add_class:"form-select" }}
+                            {% if form.vehicle.help_text %}
+                                <div class="form-text">{{ form.vehicle.help_text }}</div>
+                            {% endif %}
+                            {% if form.vehicle.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.vehicle.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Mechanic Selection -->
+                        <div class="mb-3">
+                            <label for="{{ form.mechanic.id_for_label }}" class="form-label">
+                                <i class="fas fa-user-cog"></i> Mechanic *
+                            </label>
+                            {{ form.mechanic|add_class:"form-select" }}
+                            {% if form.mechanic.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.mechanic.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Appointment Date and Time -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.appointment_date.id_for_label }}" class="form-label">
+                                    <i class="fas fa-calendar"></i> Appointment Date *
+                                </label>
+                                {{ form.appointment_date|add_class:"form-control" }}
+                                {% if form.appointment_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.appointment_date.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.appointment_time.id_for_label }}" class="form-label">
+                                    <i class="fas fa-clock"></i> Appointment Time *
+                                </label>
+                                {{ form.appointment_time|add_class:"form-select" }}
+                                {% if form.appointment_time.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.appointment_time.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Service Details (Repair or Test) -->
+                        <div id="service-details" style="display: none;">
+                            <div class="card border-info mb-3">
+                                <div class="card-header bg-info text-white">
+                                    <i class="fas fa-cog"></i> Service Details
+                                </div>
+                                <div class="card-body">
+                                    <!-- Repair Selection -->
+                                    <div id="repair-section" style="display: none;">
+                                        <label for="{{ form.repair_type.id_for_label }}" class="form-label">Repair Type *</label>
+                                        {{ form.repair_type|add_class:"form-select" }}
+                                        {% if form.repair_type.help_text %}
+                                            <div class="form-text">{{ form.repair_type.help_text }}</div>
+                                        {% endif %}
+                                        {% if form.repair_type.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.repair_type.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Test Selection -->
+                                    <div id="test-section" style="display: none;">
+                                        <label for="{{ form.test_type.id_for_label }}" class="form-label">Test Type *</label>
+                                        {{ form.test_type|add_class:"form-select" }}
+                                        {% if form.test_type.help_text %}
+                                            <div class="form-text">{{ form.test_type.help_text }}</div>
+                                        {% endif %}
+                                        {% if form.test_type.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.test_type.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if update %}
+                                    <i class="fas fa-save"></i> Update Appointment
+                                {% else %}
+                                    <i class="fas fa-plus"></i> Create Appointment
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceTypeSelect = document.getElementById('id_service_type');
+    const customerSelect = document.getElementById('id_customer');
+    const vehicleSelect = document.getElementById('id_vehicle');
+    const serviceDetails = document.getElementById('service-details');
+    const repairSection = document.getElementById('repair-section');
+    const testSection = document.getElementById('test-section');
+    const repairTypeSelect = document.getElementById('id_repair_type');
+    const testTypeSelect = document.getElementById('id_test_type');
+
+    // Store all vehicles data for filtering
+    let allVehicles = [];
+    
+    // Fetch vehicles data on page load
+    fetch('/vmsms/api/vehicles/')
+        .then(response => response.json())
+        .then(data => {
+            allVehicles = data;
+            // If customer is already selected, populate vehicles
+            if (customerSelect.value) {
+                handleCustomerChange();
+            }
+        })
+        .catch(error => console.error('Error fetching vehicles:', error));
+
+    // Handle service type change
+    function handleServiceTypeChange() {
+        const selectedType = serviceTypeSelect.value;
+        
+        if (selectedType === 'repair') {
+            serviceDetails.style.display = 'block';
+            repairSection.style.display = 'block';
+            testSection.style.display = 'none';
+            repairTypeSelect.required = true;
+            testTypeSelect.required = false;
+            testTypeSelect.value = '';
+        } else if (selectedType === 'test') {
+            serviceDetails.style.display = 'block';
+            repairSection.style.display = 'none';
+            testSection.style.display = 'block';
+            repairTypeSelect.required = false;
+            testTypeSelect.required = true;
+            repairTypeSelect.value = '';
+        } else {
+            serviceDetails.style.display = 'none';
+            repairTypeSelect.required = false;
+            testTypeSelect.required = false;
+        }
+    }
+
+    // Handle customer change - filter vehicles
+    function handleCustomerChange() {
+        const selectedCustomer = customerSelect.value;
+        
+        // Clear vehicle selection
+        vehicleSelect.innerHTML = '<option value="">---------</option>';
+        
+        if (selectedCustomer) {
+            // Filter vehicles for the selected customer
+            const customerVehicles = allVehicles.filter(vehicle => vehicle.customer_id == selectedCustomer);
+            
+            customerVehicles.forEach(vehicle => {
+                const option = document.createElement('option');
+                option.value = vehicle.license_plate;
+                option.textContent = `${vehicle.license_plate} - ${vehicle.model || 'Unknown Model'}`;
+                vehicleSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Add event listeners
+    serviceTypeSelect.addEventListener('change', handleServiceTypeChange);
+    customerSelect.addEventListener('change', handleCustomerChange);
+
+    // Initialize form state
+    handleServiceTypeChange();
+    // Don't call handleCustomerChange here as it will be called after vehicles are loaded
+});
+</script>
+{% endblock %} 

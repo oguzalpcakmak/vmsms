@@ -1,0 +1,190 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+{% block title %}Register Customer | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card p-4 shadow">
+      <div class="text-center mb-4">
+        <h2 class="mb-0">
+          <i class="fas fa-user-plus me-2 text-primary"></i>
+          Register as Customer
+        </h2>
+        <p class="text-muted mt-2">Create your customer account to access our services</p>
+      </div>
+      
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">Required Information</h5>
+            {% for field in form %}
+              {% if field.name == 'username' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-user me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'password' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-lock me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'name' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-id-card me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'surname' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-user-tag me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'email' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-envelope me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">Optional Information</h5>
+            {% for field in form %}
+              {% if field.name in 'phone_number,address' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {% if field.name == 'phone_number' %}
+                    <i class="fas fa-phone me-2"></i>
+                  {% elif field.name == 'address' %}
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                  {% endif %}
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Note:</strong> Only username, password, name, surname, and email are required. All other fields are optional.
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'vmsms:login' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Login
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i>Register as Customer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_head %}
+<style>
+  .form-control, .form-select { min-height: 44px; }
+</style>
+{% endblock %} 

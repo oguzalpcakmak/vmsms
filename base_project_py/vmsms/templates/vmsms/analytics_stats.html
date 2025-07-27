@@ -1,0 +1,171 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Statistics Analytics | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-11 col-lg-10">
+    <div class="card p-4">
+      <h2 class="mb-4 text-center">Test and Appointment/Mechanic Statistics</h2>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Number of Tests for Each Vehicle</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Vehicle</th>
+                    <th>Number of Tests</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for v in tests_per_vehicle %}
+                  <tr>
+                    <td>{{ v.license_plate }}</td>
+                    <td>{{ v.num_tests }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Number of Tests for Each Vehicle and Diagnosis</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Vehicle</th>
+                    <th>Diagnosis</th>
+                    <th>Number of Tests</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for t in tests_per_vehicle_diag %}
+                  <tr>
+                    <td>{{ t.appointment__vehicle__license_plate }}</td>
+                    <td>{{ t.diagnosis }}</td>
+                    <td>{{ t.num_tests }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="3">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Key Statistics</h5>
+            <div class="row text-center">
+              <div class="col-6">
+                <h6>High Test Results</h6>
+                <p class="display-6">{{ high_results }}</p>
+              </div>
+              <div class="col-6">
+                <h6>Tests on High Insurance Vehicles (>30%)</h6>
+                <p class="display-6">{{ tests_high_insurance }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Mechanics by Number of Appointments</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Mechanic</th>
+                    <th>Number of Appointments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for m in mechanics_appointments %}
+                  <tr>
+                    <td>{{ m.name }} {{ m.surname }}</td>
+                    <td>{{ m.num_appts }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Appointments with Test Requested (per Mechanic)</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Mechanic</th>
+                    <th>Appointments with Test</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for m in mechanics_test_appts %}
+                  <tr>
+                    <td>{{ m.name }} {{ m.surname }}</td>
+                    <td>{{ m.test_appts }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-body bg-light">
+            <h5>Percentage of Appointments Using Spare Parts (per Mechanic)</h5>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Mechanic</th>
+                    <th>Percentage (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for m in mechanics_spare_pct %}
+                  <tr>
+                    <td>{{ m.name }} {{ m.surname }}</td>
+                    <td>{{ m.pct|floatformat:2 }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="2">No data</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center">
+        <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #f8f9fa;
+}
+</style>
+{% endblock %} 

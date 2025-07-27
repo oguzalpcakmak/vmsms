@@ -1,0 +1,98 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Suggest Repair | VMSMS{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+          <h4 class="mb-0"><i class="fas fa-wrench me-2"></i>Suggest Repair</h4>
+        </div>
+        <div class="card-body">
+          <div class="mb-4">
+            <h5>Test & Diagnosis Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <strong>Test Name:</strong> {{ test.test_name }}
+              </div>
+              <div class="col-md-6">
+                <strong>Component:</strong> {{ test.component_name }}
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <strong>Test Result:</strong> {{ test.test_result.value }}
+              </div>
+              <div class="col-md-6">
+                <strong>Customer:</strong> {{ appointment.customer.name }} {{ appointment.customer.surname }}
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-12">
+                <strong>Diagnosis:</strong> 
+                <span class="text-info">{{ test.diagnosis }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="{{ form.repair_name.id_for_label }}" class="form-label">
+                <i class="fas fa-tools me-1"></i>Repair Name
+              </label>
+              {{ form.repair_name }}
+              {% if form.repair_name.errors %}
+                <div class="text-danger small">{{ form.repair_name.errors }}</div>
+              {% endif %}
+              <div class="form-text">Enter the name of the repair needed</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.estimated_cost.id_for_label }}" class="form-label">
+                <i class="fas fa-dollar-sign me-1"></i>Estimated Cost
+              </label>
+              {{ form.estimated_cost }}
+              {% if form.estimated_cost.errors %}
+                <div class="text-danger small">{{ form.estimated_cost.errors }}</div>
+              {% endif %}
+              <div class="form-text">Enter the estimated cost for this repair</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.required_parts.id_for_label }}" class="form-label">
+                <i class="fas fa-cogs me-1"></i>Required Parts
+              </label>
+              {{ form.required_parts }}
+              {% if form.required_parts.errors %}
+                <div class="text-danger small">{{ form.required_parts.errors }}</div>
+              {% endif %}
+              <div class="form-text">List the parts needed for this repair</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.notes.id_for_label }}" class="form-label">
+                <i class="fas fa-sticky-note me-1"></i>Additional Notes
+              </label>
+              {{ form.notes }}
+              {% if form.notes.errors %}
+                <div class="text-danger small">{{ form.notes.errors }}</div>
+              {% endif %}
+              <div class="form-text">Any additional information about the repair</div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-warning">
+                <i class="fas fa-plus me-2"></i>Suggest Repair
+              </button>
+              <a href="{% url 'vmsms:test_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Tests
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

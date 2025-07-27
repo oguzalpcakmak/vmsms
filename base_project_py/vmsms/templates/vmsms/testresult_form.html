@@ -1,0 +1,26 @@
+{% load form_tags %}
+{% extends 'vmsms/base.html' %}
+{% block title %}Update Test Result | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-6">
+    <div class="card p-4">
+      <h2 class="mb-3 text-center">Update Test Result</h2>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field|add_class:'form-control' }}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100">Update</button>
+      </form>
+      <div class="text-center mt-3">
+        <a href="{% url 'vmsms:test_list' %}" class="btn btn-secondary">Back to Tests</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

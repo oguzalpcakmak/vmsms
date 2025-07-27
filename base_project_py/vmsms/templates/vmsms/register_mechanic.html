@@ -1,0 +1,247 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+{% block title %}Register Mechanic | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card p-4 shadow">
+      <div class="text-center mb-4">
+        <h2 class="mb-0">
+          <i class="fas fa-tools me-2 text-primary"></i>
+          Register Mechanic
+        </h2>
+        <p class="text-muted mt-2">Create a new mechanic account for VMSMS</p>
+      </div>
+      
+      <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">Required Information</h5>
+            {% for field in form %}
+              {% if field.name == 'username' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-user me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'password' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-lock me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'name' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-id-card me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'surname' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-user-tag me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            
+            {% for field in form %}
+              {% if field.name == 'email' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  <i class="fas fa-envelope me-2"></i>
+                  {{ field.label }}
+                  <span class="text-danger">*</span>
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          
+          <div class="col-md-6">
+            <h5 class="text-primary mb-3">Optional Information</h5>
+            {% for field in form %}
+              {% if field.name in 'phone_number,address' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {% if field.name == 'phone_number' %}
+                    <i class="fas fa-phone me-2"></i>
+                  {% elif field.name == 'address' %}
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                  {% endif %}
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <h5 class="text-success mb-3">Professional Information</h5>
+            {% for field in form %}
+              {% if field.name in 'service_fee,specialization_code' %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {% if field.name == 'service_fee' %}
+                    <i class="fas fa-dollar-sign me-2"></i>
+                  {% elif field.name == 'specialization_code' %}
+                    <i class="fas fa-certificate me-2"></i>
+                  {% endif %}
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card border-info h-100">
+              <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                  <i class="fas fa-info-circle me-2"></i>Mechanic Information
+                </h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Mechanics can perform repairs and tests
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Service fee determines hourly rate
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Specialization code identifies expertise
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-info mt-3">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Note:</strong> Mechanics can perform vehicle repairs, conduct tests, and manage their appointments.
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-tools me-2"></i>Register Mechanic
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_head %}
+<style>
+  .form-control, .form-select { min-height: 44px; }
+</style>
+{% endblock %} 

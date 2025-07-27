@@ -1,0 +1,414 @@
+{% extends 'vmsms/base.html' %}
+{% load static %}
+
+{% block title %}User Management | VMSMS{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3">
+                <i class="fas fa-users-cog me-2 text-primary"></i>User Management
+            </h2>
+            <p class="text-muted">Manage all users in the system including customers and staff members.</p>
+        </div>
+    </div>
+
+    <!-- User Type Tabs -->
+    <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+        {% if not show_only_customers %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab">
+                <i class="fas fa-user-shield me-1"></i>Admins ({{ admins|length }})
+            </button>
+        </li>
+        {% endif %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if show_only_customers %}active{% endif %}" id="customers-tab" data-bs-toggle="tab" data-bs-target="#customers" type="button" role="tab">
+                <i class="fas fa-user me-1"></i>Customers ({{ customers|length }})
+            </button>
+        </li>
+        {% if not show_only_customers %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="receptionists-tab" data-bs-toggle="tab" data-bs-target="#receptionists" type="button" role="tab">
+                <i class="fas fa-user-tie me-1"></i>Receptionists ({{ receptionists|length }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mechanics-tab" data-bs-toggle="tab" data-bs-target="#mechanics" type="button" role="tab">
+                <i class="fas fa-tools me-1"></i>Mechanics ({{ mechanics|length }})
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="inventory-managers-tab" data-bs-toggle="tab" data-bs-target="#inventory-managers" type="button" role="tab">
+                <i class="fas fa-boxes me-1"></i>Inventory Managers ({{ inventory_managers|length }})
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="userTabsContent">
+        <!-- Admins Tab -->
+        {% if not show_only_customers %}
+        <div class="tab-pane fade show active" id="admins" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-shield me-2"></i>Admin Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if admins %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for admin in admins %}
+                                    <tr>
+                                        <td>{{ admin.name }} {{ admin.surname }}</td>
+                                        <td>{{ admin.username }}</td>
+                                        <td>{{ admin.email }}</td>
+                                        <td>{{ admin.phone_number|default:"N/A" }}</td>
+                                        <td>{{ admin.address|default:"N/A"|truncatechars:30 }}</td>
+                                        <td>
+                                            {% if admin.admin_id %}
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vmsms:user_detail' 'admin' admin.admin_id %}" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_edit' 'admin' admin.admin_id %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_delete' 'admin' admin.admin_id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <span class="text-muted">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-shield fa-3x text-muted mb-3"></i>
+                            <h5>No Admins Found</h5>
+                            <p class="text-muted">No administrators have been registered yet.</p>
+                            <a href="{% url 'vmsms:register_admin_from_admin' %}" class="btn btn-dark">
+                                <i class="fas fa-user-plus"></i> Register Admin
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Customers Tab -->
+        <div class="tab-pane fade {% if show_only_customers %}show active{% endif %}" id="customers" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Customer Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if customers %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for customer in customers %}
+                                    <tr>
+                                        <td>{{ customer.name }} {{ customer.surname }}</td>
+                                        <td>{{ customer.username }}</td>
+                                        <td>{{ customer.email }}</td>
+                                        <td>{{ customer.phone_number|default:"N/A" }}</td>
+                                        <td>{{ customer.address|default:"N/A"|truncatechars:30 }}</td>
+                                        <td>
+                                            {% if customer.customer_id %}
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vmsms:user_detail' 'customer' customer.customer_id %}" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_edit' 'customer' customer.customer_id %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_delete' 'customer' customer.customer_id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <span class="text-muted">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user fa-3x text-muted mb-3"></i>
+                            <h5>No Customers Found</h5>
+                            <p class="text-muted">No customers have registered in the system yet.</p>
+                            <a href="{% url 'vmsms:register_customer' %}" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Register Customer
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Receptionists Tab -->
+        {% if not show_only_customers %}
+        <div class="tab-pane fade" id="receptionists" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-tie me-2"></i>Receptionist Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if receptionists %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for receptionist in receptionists %}
+                                    <tr>
+                                        <td>{{ receptionist.name }} {{ receptionist.surname }}</td>
+                                        <td>{{ receptionist.username }}</td>
+                                        <td>{{ receptionist.email }}</td>
+                                        <td>{{ receptionist.phone_number|default:"N/A" }}</td>
+                                        <td>{{ receptionist.address|default:"N/A"|truncatechars:30 }}</td>
+                                        <td>
+                                            {% if receptionist.receptionist_id %}
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vmsms:user_detail' 'receptionist' receptionist.receptionist_id %}" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_edit' 'receptionist' receptionist.receptionist_id %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_delete' 'receptionist' receptionist.receptionist_id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <span class="text-muted">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
+                            <h5>No Receptionists Found</h5>
+                            <p class="text-muted">No receptionists have been registered yet.</p>
+                            <a href="{% url 'vmsms:register_receptionist' %}" class="btn btn-success">
+                                <i class="fas fa-user-plus"></i> Register Receptionist
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Mechanics Tab -->
+        <div class="tab-pane fade" id="mechanics" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>Mechanic Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if mechanics %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Service Fee</th>
+                                        <th>Specialization</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mechanic in mechanics %}
+                                    <tr>
+                                        <td>{{ mechanic.name }} {{ mechanic.surname }}</td>
+                                        <td>{{ mechanic.username }}</td>
+                                        <td>{{ mechanic.email }}</td>
+                                        <td>{{ mechanic.phone_number|default:"N/A" }}</td>
+                                        <td>${{ mechanic.service_fee|default:"N/A" }}</td>
+                                        <td>{{ mechanic.specialization_code|default:"N/A" }}</td>
+                                        <td>
+                                            {% if mechanic.mechanic_id %}
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vmsms:user_detail' 'mechanic' mechanic.mechanic_id %}" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_edit' 'mechanic' mechanic.mechanic_id %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_delete' 'mechanic' mechanic.mechanic_id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <span class="text-muted">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-tools fa-3x text-muted mb-3"></i>
+                            <h5>No Mechanics Found</h5>
+                            <p class="text-muted">No mechanics have been registered yet.</p>
+                            <a href="{% url 'vmsms:register_mechanic' %}" class="btn btn-warning">
+                                <i class="fas fa-user-plus"></i> Register Mechanic
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Managers Tab -->
+        <div class="tab-pane fade" id="inventory-managers" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-boxes me-2"></i>Inventory Manager Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if inventory_managers %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for inventory_manager in inventory_managers %}
+                                    <tr>
+                                        <td>{{ inventory_manager.name }} {{ inventory_manager.surname }}</td>
+                                        <td>{{ inventory_manager.username }}</td>
+                                        <td>{{ inventory_manager.email }}</td>
+                                        <td>{{ inventory_manager.phone_number|default:"N/A" }}</td>
+                                        <td>{{ inventory_manager.address|default:"N/A"|truncatechars:30 }}</td>
+                                        <td>
+                                            {% if inventory_manager.inventory_manager_id %}
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vmsms:user_detail' 'inventory_manager' inventory_manager.inventory_manager_id %}" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_edit' 'inventory_manager' inventory_manager.inventory_manager_id %}" class="btn btn-sm btn-outline-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'vmsms:user_delete' 'inventory_manager' inventory_manager.inventory_manager_id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <span class="text-muted">No actions available</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-boxes fa-3x text-muted mb-3"></i>
+                            <h5>No Inventory Managers Found</h5>
+                            <p class="text-muted">No inventory managers have been registered yet.</p>
+                            <a href="{% url 'vmsms:register_inventory_manager' %}" class="btn btn-info">
+                                <i class="fas fa-user-plus"></i> Register Inventory Manager
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="row mt-4">
+        <div class="col">
+            {% if show_only_customers %}
+                {% if user_type == 'receptionist' %}
+                    <a href="{% url 'vmsms:receptionist_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                {% elif user_type == 'mechanic' %}
+                    <a href="{% url 'vmsms:mechanic_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                {% else %}
+                    <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'vmsms:admin_dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

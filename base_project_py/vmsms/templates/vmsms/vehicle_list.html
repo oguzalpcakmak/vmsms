@@ -1,0 +1,86 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+
+{% block title %}My Vehicles | VMSMS{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-3">
+                {% if user_type == 'customer' %}
+                    My Vehicles
+                {% else %}
+                    Vehicle Management
+                {% endif %}
+            </h2>
+            {% if user_type in 'customer,receptionist' %}
+            <a href="{% url 'vmsms:vehicle_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Vehicle
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if vehicles %}
+        <div class="row">
+            {% for vehicle in vehicles %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ vehicle.model }}</h5>
+                        <div class="card-text">
+                            <p class="mb-1"><strong>License Plate:</strong> {{ vehicle.license_plate }}</p>
+                            <p class="mb-1"><strong>Year:</strong> {{ vehicle.year|default:"N/A" }}</p>
+                            <p class="mb-1"><strong>VIN:</strong> {{ vehicle.vin_number|default:"N/A" }}</p>
+                            <p class="mb-3"><strong>Insurance:</strong> {{ vehicle.insurance.company|default:"N/A" }}</p>
+                        </div>
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'vmsms:vehicle_detail' vehicle.license_plate %}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'vmsms:vehicle_update' vehicle.license_plate %}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'vmsms:vehicle_delete' vehicle.license_plate %}" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-car fa-3x mb-3"></i>
+                    <h4>No Vehicles Found</h4>
+                    {% if user_type == 'customer' %}
+                        <p>You haven't added any vehicles yet. Add your first vehicle to get started!</p>
+                        <a href="{% url 'vmsms:vehicle_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Your First Vehicle
+                        </a>
+                    {% elif user_type == 'receptionist' %}
+                        <p>No vehicles have been registered in the system yet.</p>
+                        <a href="{% url 'vmsms:vehicle_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add First Vehicle
+                        </a>
+                    {% else %}
+                        <p>No vehicles are currently registered in the system.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row mt-4">
+        <div class="col">
+            <a href="{% url 'vmsms:'|add:user_type|add:'_dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,70 @@
+{% extends 'vmsms/base.html' %}
+{% block title %}Diagnose Test | VMSMS{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-info text-white">
+          <h4 class="mb-0"><i class="fas fa-stethoscope me-2"></i>Diagnose Test</h4>
+        </div>
+        <div class="card-body">
+          <div class="mb-4">
+            <h5>Test Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <strong>Test Name:</strong> {{ test.test_name }}
+              </div>
+              <div class="col-md-6">
+                <strong>Component:</strong> {{ test.component_name }}
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <strong>Unit Price:</strong> ${{ test.test_unit_price }}
+              </div>
+              <div class="col-md-6">
+                <strong>Customer:</strong> {{ appointment.customer.name }} {{ appointment.customer.surname }}
+              </div>
+            </div>
+          </div>
+          
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="{{ form.value.id_for_label }}" class="form-label">
+                <i class="fas fa-chart-line me-1"></i>Test Result Value
+              </label>
+              {{ form.value }}
+              {% if form.value.errors %}
+                <div class="text-danger small">{{ form.value.errors }}</div>
+              {% endif %}
+              <div class="form-text">Enter the numerical result from the test</div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="{{ form.diagnosis.id_for_label }}" class="form-label">
+                <i class="fas fa-clipboard-list me-1"></i>Diagnosis
+              </label>
+              {{ form.diagnosis }}
+              {% if form.diagnosis.errors %}
+                <div class="text-danger small">{{ form.diagnosis.errors }}</div>
+              {% endif %}
+              <div class="form-text">Describe what the test revealed (e.g., "Brake pads worn", "Oil leak detected")</div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-info">
+                <i class="fas fa-save me-2"></i>Save Diagnosis
+              </button>
+              <a href="{% url 'vmsms:test_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Tests
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

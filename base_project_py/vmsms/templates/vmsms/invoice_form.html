@@ -1,0 +1,183 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+{% block title %}Create Invoice | VMSMS{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">
+          <i class="fas fa-file-invoice me-2"></i>Create Invoice
+        </h3>
+      </div>
+      <div class="card-body p-4">
+        <form method="post" id="invoice-form">
+          {% csrf_token %}
+          
+          <!-- Appointment Selection -->
+          <div class="mb-4">
+            <label for="{{ form.appointment.id_for_label }}" class="form-label">
+              <i class="fas fa-calendar-check me-2"></i>Select Appointment *
+            </label>
+            {{ form.appointment|add_class:"form-select" }}
+            {% if form.appointment.help_text %}
+              <div class="form-text">{{ form.appointment.help_text }}</div>
+            {% endif %}
+            {% if form.appointment.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.appointment.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Invoice Details -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="{{ form.invoice_date.id_for_label }}" class="form-label">
+                <i class="fas fa-calendar me-2"></i>Invoice Date *
+              </label>
+              {{ form.invoice_date|add_class:"form-control" }}
+              {% if form.invoice_date.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.invoice_date.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+              <label for="{{ form.amount_due.id_for_label }}" class="form-label">
+                <i class="fas fa-dollar-sign me-2"></i>Amount Due *
+              </label>
+              {{ form.amount_due|add_class:"form-control" }}
+              {% if form.amount_due.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.amount_due.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="{{ form.payment_status.id_for_label }}" class="form-label">
+                <i class="fas fa-credit-card me-2"></i>Payment Status *
+              </label>
+              {{ form.payment_status|add_class:"form-select" }}
+              {% if form.payment_status.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.payment_status.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="col-md-6">
+              <label for="{{ form.payment_date.id_for_label }}" class="form-label">
+                <i class="fas fa-clock me-2"></i>Payment Date
+              </label>
+              {{ form.payment_date|add_class:"form-control" }}
+              {% if form.payment_date.errors %}
+                <div class="invalid-feedback d-block">
+                  {{ form.payment_date.errors.0 }}
+                </div>
+              {% endif %}
+              <div class="form-text">Leave empty if payment is pending</div>
+            </div>
+          </div>
+
+          <!-- Form Errors -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Action Buttons -->
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-secondary me-md-2">
+              <i class="fas fa-times me-2"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Create Invoice
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentStatusSelect = document.getElementById('id_payment_status');
+    const paymentDateField = document.getElementById('id_payment_date');
+    const appointmentSelect = document.getElementById('id_appointment');
+    const amountDueField = document.getElementById('id_amount_due');
+    
+    // Auto-fill payment date when status is set to 'Paid'
+    paymentStatusSelect.addEventListener('change', function() {
+        if (this.value === 'Paid' && !paymentDateField.value) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            paymentDateField.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    });
+    
+    // Calculate amount when appointment is selected
+    appointmentSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            // Get appointment details from the option text or data attributes
+            const appointmentText = selectedOption.text;
+            
+            // Calculate amount based on service type
+            let amount = 0.0;
+            
+            // Check if it's a test or repair appointment
+            if (appointmentText.toLowerCase().includes('test')) {
+                amount = 50.0; // Base test fee
+                // You could add more logic here to get actual test costs
+            } else {
+                amount = 100.0; // Base repair fee
+                // You could add more logic here to get mechanic service fees
+            }
+            
+            // Update the amount field
+            amountDueField.value = amount.toFixed(2);
+        } else {
+            amountDueField.value = '0.00';
+        }
+    });
+    
+    // Add a "Mark as Paid" button for customers
+    const markAsPaidBtn = document.createElement('button');
+    markAsPaidBtn.type = 'button';
+    markAsPaidBtn.className = 'btn btn-success mt-2';
+    markAsPaidBtn.innerHTML = '<i class="fas fa-check me-2"></i>Mark as Paid';
+    markAsPaidBtn.onclick = function() {
+        paymentStatusSelect.value = 'Paid';
+        if (!paymentDateField.value) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            paymentDateField.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    };
+    
+    // Add the button after the payment status field
+    const paymentStatusContainer = paymentStatusSelect.parentElement;
+    paymentStatusContainer.appendChild(markAsPaidBtn);
+});
+</script>
+{% endblock %} 

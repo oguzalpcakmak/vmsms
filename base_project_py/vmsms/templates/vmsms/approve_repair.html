@@ -1,0 +1,136 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+
+{% block title %}Approve Repair - {{ appointment.appointment_id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-tools me-2"></i>
+                        Approve Repair
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Appointment Information</h6>
+                        <p class="mb-0">
+                            <strong>Appointment ID:</strong> {{ appointment.appointment_id }}<br>
+                            <strong>Vehicle:</strong> {{ appointment.vehicle.license_plate }} - {{ appointment.vehicle.model }}<br>
+                            <strong>Customer:</strong> {{ appointment.customer.name }}<br>
+                            <strong>Mechanic:</strong> {{ appointment.mechanic.name }} {{ appointment.mechanic.surname }}<br>
+                            <strong>Service Type:</strong> {{ appointment.service_type|title }}
+                        </p>
+                    </div>
+
+                    {% if appointment.repair %}
+                    <div class="alert alert-primary">
+                        <h6 class="alert-heading">Repair Details</h6>
+                        <p class="mb-0">
+                            <strong>Repair Code:</strong> {{ appointment.repair.repair_code }}<br>
+                            <strong>Repair Name:</strong> {{ appointment.repair.repair_name }}<br>
+                            <strong>Repair Date:</strong> {{ appointment.repair.repair_date }}<br>
+                            <strong>Repair Cost:</strong> ${{ appointment.repair.repair_cost|default:"0.00" }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if appointment.test %}
+                    <div class="alert alert-warning">
+                        <h6 class="alert-heading">Test Information</h6>
+                        <p class="mb-0">
+                            <strong>Test Name:</strong> {{ appointment.test.test_name }}<br>
+                            <strong>Test Result:</strong> {{ appointment.test.test_result.value }}<br>
+                            <strong>Diagnosis:</strong> {{ appointment.test.diagnosis|default:"Pending" }}<br>
+                            <strong>Test Completed:</strong> 
+                            {% if appointment.test_completed %}
+                            <span class="badge bg-success">Yes</span>
+                            {% else %}
+                            <span class="badge bg-danger">No</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-success mb-3">Approval Status</h5>
+                                {% for field in form %}
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ field|add_class:"form-check-input" }}
+                                        <label for="{{ field.id_for_label }}" class="form-check-label">
+                                            {{ field.label }}
+                                        </label>
+                                    </div>
+                                    {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <h6 class="mb-0">Approval Rules</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="mb-2">
+                                                <i class="fas fa-check-circle text-success me-2"></i>
+                                                Test must be completed before repair approval
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-info-circle text-info me-2"></i>
+                                                Only mechanics and admins can approve repairs
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                                Once approved, repair can proceed
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if not appointment.test_completed and appointment.service_type == 'repair' %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> The test for this repair has not been completed yet. 
+                            You must complete the test before approving the repair.
+                            <a href="{% url 'vmsms:update_test_result' appointment.test.test_id %}" class="btn btn-sm btn-outline-danger ms-2">
+                                Complete Test
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'vmsms:appointment_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Appointments
+                            </a>
+                            <button type="submit" class="btn btn-success" {% if not appointment.test_completed and appointment.service_type == 'repair' %}disabled{% endif %}>
+                                <i class="fas fa-check me-2"></i>Update Approval Status
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

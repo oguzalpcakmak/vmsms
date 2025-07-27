@@ -1,0 +1,6 @@
+Django==4.2.1
+# Optional: Uncomment if using MySQL database
+# mysql-connector-python==8.0.33
+matplotlib==3.8.2
+plotly==5.17.0
+gunicorn==21.2.0

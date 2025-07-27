@@ -1,0 +1,59 @@
+{% extends 'vmsms/base.html' %}
+{% load form_tags %}
+{% block title %}Login - VMSMS{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Vehicle Maintenance Service Management System</h3>
+                    <p class="mb-0">Please Login</p>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="alert alert-info" role="alert">
+                        <strong>Info:</strong> Please check the USER_GUIDELINE.txt file in the project root directory for necessary credentials.
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-3 text-center">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="{% url 'vmsms:register_customer' %}" class="btn btn-outline-secondary">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_head %}
+<style>
+  .form-control { min-height: 44px; }
+  .alert { border-left: 4px solid #17a2b8; }
+  .alert-heading { color: #0c5460; }
+  .alert-link { text-decoration: underline; }
+</style>
+{% endblock %} 
