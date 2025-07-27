@@ -215,10 +215,10 @@ This project is developed for educational purposes as part of the IE304 course.
 
 ## 👨‍💻 Author
 
-- **Student Name**: [Your Name]
+- **Student Name**: Oğuz Alp Çakmak
 - **Course**: IE304 - Production and Service Information Systems
-- **Institution**: [Your University Name]
-- **Year**: [Academic Year]
+- **Institution**: Middle East Technical University
+- **Year**: 2025
 
 ## 🙏 Acknowledgments
 
